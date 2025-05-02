@@ -1,0 +1,13 @@
+setuptools
+pandas
+matplotlib
+plotly
+seaborn
+requests
+python-dotenv
+jupyter
+jupyterlab
+marimo
+ruff
+nbconvert
+pynput

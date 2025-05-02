@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "outlooklib"
+version = "0.0.1"
+requires-python = ">=3.13"
+description = "My Outlook package!"
+readme = "README.md"
+authors = [
+    { name = "Paulo Portela", email = "portela.paulo@gmail.com" }
+]
+maintainers = [
+    {name = "Paulo Portela", email = "portela.paulo@gmail.com" }
+]
+license = "BSD-3-Clause"
+license-files = ["LICEN[CS]E*"]
+keywords = [
+    "Microsoft", "SharePoint", "Python", "API", "Office365", "GraphAPI"
+]
+classifiers = [
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Intended Audience :: Developers",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: MacOS",
+    "Operating System :: MacOS :: MacOS X",
+]
+dependencies = [
+    "requests~=2.0",
+    "pydantic~=1.0"
+]
+
+[project.urls]
+Homepage = "https://github.com/aghuttun/outlooklib"
+Documentation = "https://github.com/aghuttun/outlooklib/README.md"
+
+[project.scripts]
+outlooklib = "outlooklib.__main__:main"
