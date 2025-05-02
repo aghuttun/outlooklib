@@ -1,0 +1,2 @@
+# outlooklib
+Outlook utils.
