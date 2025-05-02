@@ -1,5 +1,5 @@
-[![PyPI version](https://badge.fury.io/py/aghututn.svg)](https://badge.fury.io/py/aghututn)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/aghututn)](https://pypi.org/project/aghututn/)
+[![PyPI version](https://badge.fury.io/py/aghuttun.svg)](https://badge.fury.io/py/aghuttun)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/aghuttun)](https://pypi.org/project/aghuttun/)
 ![Linux](https://img.shields.io/badge/os-Linux-blue.svg)
 ![macOS Intel](https://img.shields.io/badge/os-macOS_Intel-lightgrey.svg)
 ![macOS ARM](https://img.shields.io/badge/os-macOS_ARM-lightgrey.svg)
@@ -16,7 +16,7 @@
 
 ## Package Description
 
-Microsoft SharePoint interaction (Under development)!
+Microsoft Outlook interaction (Under development)!
 
 ## Usage
 
