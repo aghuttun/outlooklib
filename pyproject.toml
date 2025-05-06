@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "outlooklib"
-version = "0.0.1"
+version = "0.0.2"
 requires-python = ">=3.13"
 description = "My Outlook package!"
 readme = "README.md"
@@ -17,7 +17,7 @@ maintainers = [
 license = "BSD-3-Clause"
 license-files = ["LICEN[CS]E*"]
 keywords = [
-    "Microsoft", "SharePoint", "Python", "API", "Office365", "GraphAPI"
+    "Microsoft", "Outlook", "Python", "API", "Office365", "GraphAPI"
 ]
 classifiers = [
     "Programming Language :: Python :: 3.13",
@@ -35,7 +35,4 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://github.com/aghuttun/outlooklib"
-Documentation = "https://github.com/aghuttun/outlooklib/README.md"
-
-[project.scripts]
-outlooklib = "outlooklib.__main__:main"
+Documentation = "https://github.com/aghuttun/outlooklib/blob/main/README.md"

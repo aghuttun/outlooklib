@@ -1,7 +1,7 @@
-from .print_me_funcs import print_me
+from .outlook import Outlook
 
 def main():
-    print_me()
+    print("outlooklib is a library for interacting with Outlook.")
 
 if __name__ == "__main__":
     main()

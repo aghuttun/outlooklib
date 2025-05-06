@@ -1,9 +1,3 @@
-[![PyPI version](https://badge.fury.io/py/aghuttun.svg)](https://badge.fury.io/py/aghuttun)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/aghuttun)](https://pypi.org/project/aghuttun/)
-![Linux](https://img.shields.io/badge/os-Linux-blue.svg)
-![macOS Intel](https://img.shields.io/badge/os-macOS_Intel-lightgrey.svg)
-![macOS ARM](https://img.shields.io/badge/os-macOS_ARM-lightgrey.svg)
-
 # outlooklib
 
 ### If you like the repo, it would be awesome if you could add a star to it! It really helps out the visibility. Also for any questions at all we'd love to hear from you at portela.paulo@gmail.com
@@ -18,6 +12,8 @@
 
 Microsoft Outlook interaction (Under development)!
 
+Note: This packages uses pydantic~=1.0!
+
 ## Usage
 
 * [outlooklib](#outlooklib)
@@ -26,18 +22,7 @@ from a script:
 
 ```python
 import outlooklib
-
-outlooklib.print_name()
-```
-
-```bash
-Console.output("Hello World");
-```
-
-From the command line:
-
-```bash
-outlooklib
+import logging
 ```
 
 ## Installation
