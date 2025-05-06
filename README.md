@@ -1,6 +1,6 @@
 # outlooklib
 
-### If you like the repo, it would be awesome if you could add a star to it! It really helps out the visibility. Also for any questions at all we'd love to hear from you at portela.paulo@gmail.com
+This library provides access to some Outlook functionalities.
 
 * [Description](#package-description)
 * [Usage](#usage)
