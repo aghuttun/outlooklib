@@ -79,7 +79,7 @@ class Outlook(object):
                                                   client_folder=client_folder)
         
         # Handle folder
-        self.change_folder(client_folder)
+        self.change_folder(id=client_folder)
 
         # Authenticate
         self.auth()
