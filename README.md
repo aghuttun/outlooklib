@@ -10,9 +10,10 @@ This library provides access to some Outlook functionalities.
 
 ## Package Description
 
-Microsoft Outlook interaction (Under development)!
+Microsoft Outlook client using [requests](https://pypi.org/project/requests/) (Under development)!
 
-Note: This packages uses pydantic~=1.0!
+> [!IMPORTANT]  
+> This packages uses pydantic~=1.0!
 
 ## Usage
 
