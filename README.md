@@ -1,7 +1,5 @@
 # outlooklib
 
-This library provides access to some Outlook functionalities.
-
 * [Description](#package-description)
 * [Usage](#usage)
 * [Installation](#installation)
@@ -9,7 +7,7 @@ This library provides access to some Outlook functionalities.
 
 ## Package Description
 
-Microsoft Outlook client using [requests](https://pypi.org/project/requests/) (Under development)!
+Microsoft Outlook client Python package that uses the [requests](https://pypi.org/project/requests/) library.
 
 > [!IMPORTANT]  
 > This packages uses pydantic~=1.0!

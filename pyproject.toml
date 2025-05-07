@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "outlooklib"
 version = "0.0.3"
 requires-python = ">=3.13"
-description = "My Outlook package!"
+description = "Microsoft Outlook client Python package that uses the requests library."
 readme = "README.md"
 authors = [
     { name = "Paulo Portela", email = "portela.paulo@gmail.com" }
