@@ -20,7 +20,7 @@ keywords = [
     "Microsoft", "Outlook", "Python", "API", "Office365", "GraphAPI"
 ]
 classifiers = [
-    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: Implementation :: CPython",
     "Intended Audience :: Developers",
     "Operating System :: POSIX :: Linux",
