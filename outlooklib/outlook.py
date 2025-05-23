@@ -14,28 +14,29 @@ import json
 import logging
 import os
 # TypeAdapter v2 vs parse_obj_as v1
-from pydantic import BaseModel, Field, parse_obj_as, validator
+from pydantic import BaseModel, Field, parse_obj_as
 import re
 import requests
+from typing import Any, Type
 
 
 class Outlook(object):
     @dataclasses.dataclass
     class Configuration(object):
-        api_domain: str = None
-        api_version: str = None
-        sp_domain: str = None
-        client_id: str = None
-        tenant_id: str = None
-        client_secret: str = None
-        token: str = None
-        client_email: str = None
-        client_folder: str = None
+        api_domain: str | None = None
+        api_version: str | None = None
+        sp_domain: str | None = None
+        client_id: str | None = None
+        tenant_id: str | None = None
+        client_secret: str | None = None
+        token: str | None = None
+        client_email: str | None = None
+        client_folder: str = "Inbox"
 
     @dataclasses.dataclass
     class Response:
         status_code: int
-        content: list | dict | str | None = None
+        content: Any = None
 
     def __init__(self, client_id: str, tenant_id: str, client_secret: str, sp_domain: str, client_email: str, client_folder: str = "Inbox") -> None:
         """
@@ -122,7 +123,7 @@ class Outlook(object):
         if response.status_code == 200:
             self.__configuration.token = json.loads(response.content.decode("utf-8"))["access_token"]
 
-    def _export_to_json(self, content: bytes, save_as: str) -> None:
+    def _export_to_json(self, content: bytes, save_as: str | None) -> None:
         """
         Export response content to a JSON file.
 
@@ -138,7 +139,7 @@ class Outlook(object):
             with open(file=save_as, mode="wb") as file:
                 file.write(content)
     
-    def _handle_response(self, response: requests.Response, model: BaseModel, rtype: str = "scalar") -> BaseModel | list[BaseModel]:
+    def _handle_response(self, response: requests.Response, model: Type[BaseModel], rtype: str = "scalar") -> BaseModel | list[BaseModel]:
         """
         Handles the response from an API request and deserializes the JSON content.
 
@@ -163,6 +164,7 @@ class Outlook(object):
             # Deserialize json
             content_raw = response.json()["value"]
             # Pydantic v1
+            # return parse_obj_as(list[model], content_raw)
             return [dict(data) for data in parse_obj_as(list[model], content_raw)]
 
     def change_client_email(self, email: str) -> None:

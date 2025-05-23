@@ -57,7 +57,6 @@ if response.status_code == 204:
 outlook.change_folder(id="root")
 ```
 
-
 ## Installation
 
 * [outlooklib](#outlooklib)
@@ -67,14 +66,13 @@ Install python and pip if you have not already.
 Then run:
 
 ```bash
-pip3 install pip --upgrade
-pip3 install wheel
+pip install pip --upgrade
 ```
 
 For production:
 
 ```bash
-pip3 install outlooklib
+pip install outlooklib
 ```
 
 This will install the package and all of it's python dependencies.
@@ -84,7 +82,7 @@ If you want to install the project for development:
 ```bash
 git clone https://github.com/aghuttun/outlooklib.git
 cd outlooklib
-pip3 install -e .[dev]
+pip install -e ".[dev]"
 ```
 
 To test the development package: [Testing](#testing)
