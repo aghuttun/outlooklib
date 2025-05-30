@@ -38,10 +38,19 @@ outlook = outlooklib.Outlook(client_id=client_id,
 ```
 
 ```python
+# Retrieves a list of mail folders
 response = outlook.list_folders()
 if response.status_code == 200:
     df = pd.DataFrame([item.dict() for item in response.content])
     print(df)
+```
+
+```python
+# Retrieves the top 100 messages from the specified folder, filtered by a given condition
+response = outlook.list_messages(filter="isRead ne true")
+if response.status_code == 200:
+    df = pd.DataFrame([item.dict() for item in response.content])
+    display(df)
 ```
 
 ```python

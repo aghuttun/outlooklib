@@ -255,9 +255,9 @@ class Outlook(object):
 
     def list_messages(self, filter: str, save_as: str | None = None) -> Response:
         """
-        Retrieves the top 100 messages from the specified folder, optionally filtered by a given condition.
+        Retrieves the top 100 messages from the specified folder, filtered by a given condition.
 
-        This method fetches up to 100 email messages from the current folder, applying an optional filter to narrow down the results.
+        This method fetches up to 100 email messages from the current folder, applying an filter to narrow down the results.
         The results can be saved to a JSON file if the `save_as` parameter is provided.
 
         Args:
