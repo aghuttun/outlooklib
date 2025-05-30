@@ -38,6 +38,13 @@ outlook = outlooklib.Outlook(client_id=client_id,
 ```
 
 ```python
+response = outlook.list_folders()
+if response.status_code == 200:
+    df = pd.DataFrame([item.dict() for item in response.content])
+    print(df)
+```
+
+```python
 message_id = "A...A=="
 response = outlook.download_message_attachment(id=message_id, 
                                                path=r"C:\Users\admin", 
