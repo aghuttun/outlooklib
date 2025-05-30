@@ -42,13 +42,6 @@ class Outlook(object):
         """
         Initializes the Outlook client with the provided credentials and configuration.
 
-        Example: outlook = Outlook(client_id="X",
-                                   tenant_id="X",
-                                   client_secret="X",
-                                   sp_domain="companygroup.sharepoint.com",
-                                   client_email="X",
-                                   client_folder="Inbox")
-
         Args:
             client_id (str): The Azure client ID used for authentication.
             tenant_id (str): The Azure tenant ID associated with the client.
@@ -58,26 +51,26 @@ class Outlook(object):
             client_folder (str): Client folder. Defaults to "Inbox".
         """
         # Init logging
-        self.__logger = logging.getLogger(name=__name__)
-        self.__logger.setLevel(level=logging.INFO)
+        self._logger = logging.getLogger(name=__name__)
+        self._logger.setLevel(level=logging.INFO)
         handler = logging.StreamHandler()
-        self.__logger.addHandler(handler)
+        self._logger.addHandler(handler)
 
         # Init variables
-        self.__session: requests.Session = requests.Session()
+        self._session: requests.Session = requests.Session()
         api_domain = "graph.microsoft.com"
         api_version = "v1.0"
 
         # Credentials/Configuration
-        self.__configuration = self.Configuration(api_domain=api_domain,
-                                                  api_version=api_version,
-                                                  sp_domain=sp_domain,
-                                                  client_id=client_id, 
-                                                  tenant_id=tenant_id,
-                                                  client_secret=client_secret,
-                                                  token=None,
-                                                  client_email=client_email,
-                                                  client_folder=client_folder)
+        self._configuration = self.Configuration(api_domain=api_domain,
+                                                 api_version=api_version,
+                                                 sp_domain=sp_domain,
+                                                 client_id=client_id, 
+                                                 tenant_id=tenant_id,
+                                                 client_secret=client_secret,
+                                                 token=None,
+                                                 client_email=client_email,
+                                                 client_folder=client_folder)
         
         # Handle folder
         self.change_folder(id=client_folder)
@@ -89,8 +82,8 @@ class Outlook(object):
         """
         Cleans the house at the exit.
         """
-        self.__logger.info(msg="Cleans the house at the exit")
-        self.__session.close()
+        self._logger.info(msg="Cleans the house at the exit")
+        self._session.close()
     
     def auth(self) -> None:
         """
@@ -99,29 +92,29 @@ class Outlook(object):
         using the client credentials flow. The token is stored in the Configuration
         dataclass for subsequent API requests.
         """
-        self.__logger.info(msg="Authentication")
+        self._logger.info(msg="Authentication")
 
         # Request headers
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
         # Authorization URL
-        url_auth = f"https://login.microsoftonline.com/{self.__configuration.tenant_id}/oauth2/v2.0/token"
+        url_auth = f"https://login.microsoftonline.com/{self._configuration.tenant_id}/oauth2/v2.0/token"
 
         # Request body
         body = {"grant_type": "client_credentials",
-                "client_id": self.__configuration.client_id,
-                "client_secret": self.__configuration.client_secret,
+                "client_id": self._configuration.client_id,
+                "client_secret": self._configuration.client_secret,
                 "scope": "https://graph.microsoft.com/.default"}
 
         # Request
-        response = self.__session.post(url=url_auth, data=body, headers=headers, verify=True)
+        response = self._session.post(url=url_auth, data=body, headers=headers, verify=True)
 
         # Log response code
-        self.__logger.info(msg=f"HTTP Status Code {response.status_code}")
+        self._logger.info(msg=f"HTTP Status Code {response.status_code}")
 
         # Return valid response
         if response.status_code == 200:
-            self.__configuration.token = json.loads(response.content.decode("utf-8"))["access_token"]
+            self._configuration.token = json.loads(response.content.decode("utf-8"))["access_token"]
 
     def _export_to_json(self, content: bytes, save_as: str | None) -> None:
         """
@@ -135,7 +128,7 @@ class Outlook(object):
             save_as (str): The file path where the JSON content will be saved. If None, the content will not be saved.
         """
         if save_as is not None:
-            self.__logger.info(msg="Exports response to JSON file.")
+            self._logger.info(msg="Exports response to JSON file.")
             with open(file=save_as, mode="wb") as file:
                 file.write(content)
     
@@ -164,8 +157,8 @@ class Outlook(object):
             # Deserialize json
             content_raw = response.json()["value"]
             # Pydantic v1
-            # return parse_obj_as(list[model], content_raw)
-            return [dict(data) for data in parse_obj_as(list[model], content_raw)]
+            return parse_obj_as(list[model], content_raw)
+            # return [dict(data) for data in parse_obj_as(list[model], content_raw)]
 
     def change_client_email(self, email: str) -> None:
         """
@@ -177,10 +170,10 @@ class Outlook(object):
         Args:
             email (str): The new client email address to be set.
         """
-        self.__logger.info(msg="Change the current client email to be accessed")
-        self.__logger.info(msg=email)
+        self._logger.info(msg="Change the current client email to be accessed")
+        self._logger.info(msg=email)
 
-        self.__configuration.client_email = email
+        self._configuration.client_email = email
 
     def change_folder(self, id: str) -> None:
         """
@@ -194,10 +187,10 @@ class Outlook(object):
                       Example folder names: "Inbox", "SentItems", "Drafts", etc.
                       Example folder ID: "AAMkAGI2T..."
         """
-        self.__logger.info(msg="Change the current folder to be accessed")
-        self.__logger.info(msg=id)
+        self._logger.info(msg="Change the current folder to be accessed")
+        self._logger.info(msg=id)
 
-        self.__configuration.client_folder = id
+        self._configuration.client_folder = id
     
     def list_folders(self, save_as: str | None = None) -> Response:
         """
@@ -214,14 +207,14 @@ class Outlook(object):
                       - status_code (int): The HTTP status code of the request.
                       - content (list[BaseModel] | None): A list of deserialized folder objects if the request is successful, otherwise None.
         """
-        self.__logger.info(msg="Get list of folders")
+        self._logger.info(msg="Get list of folders")
 
         # Configuration
-        token = self.__configuration.token
-        api_domain = self.__configuration.api_domain
-        api_version = self.__configuration.api_version
-        client_email = self.__configuration.client_email
-        client_folder = self.__configuration.client_folder
+        token = self._configuration.token
+        api_domain = self._configuration.api_domain
+        api_version = self._configuration.api_version
+        client_email = self._configuration.client_email
+        client_folder = self._configuration.client_folder
 
         # Request headers
         headers = {"Authorization": f"Bearer {token}",
@@ -242,15 +235,15 @@ class Outlook(object):
         params = {"$select": ",".join(alias_list), "$top": 100, "includeHiddenFolders": True}
         
         # Request
-        response = self.__session.get(url=url_query, headers=headers, params=params, verify=True)
+        response = self._session.get(url=url_query, headers=headers, params=params, verify=True)
 
         # Log response code
-        self.__logger.info(msg=f"HTTP Status Code {response.status_code}")
+        self._logger.info(msg=f"HTTP Status Code {response.status_code}")
 
         # Output
         content = None
         if response.status_code == 200:
-            self.__logger.info(msg="Request successful")
+            self._logger.info(msg="Request successful")
 
             # Export response to json file
             self._export_to_json(content=response.content, save_as=save_as)
@@ -282,15 +275,15 @@ class Outlook(object):
                       - status_code (int): The HTTP status code of the request.
                       - content (list[BaseModel] | None): A list of deserialized message objects if the request is successful, otherwise None.
         """
-        self.__logger.info(msg="Returns the (top 100) messages found in the folder")
-        self.__logger.info(msg=filter)
+        self._logger.info(msg="Returns the (top 100) messages found in the folder")
+        self._logger.info(msg=filter)
 
         # Configuration
-        token = self.__configuration.token
-        api_domain = self.__configuration.api_domain
-        api_version = self.__configuration.api_version
-        client_email = self.__configuration.client_email
-        client_folder = self.__configuration.client_folder
+        token = self._configuration.token
+        api_domain = self._configuration.api_domain
+        api_version = self._configuration.api_version
+        client_email = self._configuration.client_email
+        client_folder = self._configuration.client_folder
 
         # Request headers
         headers = {"Authorization": f"Bearer {token}",
@@ -334,15 +327,15 @@ class Outlook(object):
         params = {"$select": ",".join(alias_list), "$filter": filter, "$top": 100}
         
         # Request
-        response = self.__session.get(url=url_query, headers=headers, params=params, verify=True)
+        response = self._session.get(url=url_query, headers=headers, params=params, verify=True)
 
         # Log response code
-        self.__logger.info(msg=f"HTTP Status Code {response.status_code}")
+        self._logger.info(msg=f"HTTP Status Code {response.status_code}")
 
         # Output
         content = None
         if response.status_code == 200:
-            self.__logger.info(msg="Request successful")
+            self._logger.info(msg="Request successful")
 
             # Export response to json file
             self._export_to_json(content=response.content, save_as=save_as)
@@ -369,16 +362,16 @@ class Outlook(object):
                       - status_code (int): The HTTP status code of the move request.
                       - content (BaseModel | None): The deserialized content of the response if the move is successful, otherwise None.
         """
-        self.__logger.info(msg="Moves a message from the folder to another folder")
-        self.__logger.info(msg=id)
-        self.__logger.info(msg=to)
+        self._logger.info(msg="Moves a message from the folder to another folder")
+        self._logger.info(msg=id)
+        self._logger.info(msg=to)
 
         # Configuration
-        token = self.__configuration.token
-        api_domain = self.__configuration.api_domain
-        api_version = self.__configuration.api_version
-        client_email = self.__configuration.client_email
-        client_folder = self.__configuration.client_folder
+        token = self._configuration.token
+        api_domain = self._configuration.api_domain
+        api_version = self._configuration.api_version
+        client_email = self._configuration.client_email
+        client_folder = self._configuration.client_folder
 
         # Request headers
         headers = {"Authorization": f"Bearer {token}",
@@ -400,15 +393,15 @@ class Outlook(object):
         body = {"DestinationId": to}
 
         # Request query
-        response = self.__session.post(url=url_query, headers=headers, params=params, json=body, verify=True)
+        response = self._session.post(url=url_query, headers=headers, params=params, json=body, verify=True)
 
         # Log response code
-        self.__logger.info(msg=f"HTTP Status Code {response.status_code}")
+        self._logger.info(msg=f"HTTP Status Code {response.status_code}")
 
         # Output
         content = None
         if response.status_code == 201:
-            self.__logger.info(msg="Request successful")
+            self._logger.info(msg="Request successful")
 
             # Export response to json file
             self._export_to_json(content=response.content, save_as=save_as)
@@ -432,15 +425,15 @@ class Outlook(object):
                       - status_code (int): The HTTP status code of the deletion request.
                       - content (None): Content is None when the deletion is successful.
         """
-        self.__logger.info(msg="Deletes a message from the current folder")
-        self.__logger.info(msg=id)
+        self._logger.info(msg="Deletes a message from the current folder")
+        self._logger.info(msg=id)
 
         # Configuration
-        token = self.__configuration.token
-        api_domain = self.__configuration.api_domain
-        api_version = self.__configuration.api_version
-        client_email = self.__configuration.client_email
-        client_folder = self.__configuration.client_folder
+        token = self._configuration.token
+        api_domain = self._configuration.api_domain
+        api_version = self._configuration.api_version
+        client_email = self._configuration.client_email
+        client_folder = self._configuration.client_folder
 
         # Request headers
         headers = {"Authorization": f"Bearer {token}",
@@ -450,15 +443,15 @@ class Outlook(object):
         url_query = fr"https://{api_domain}/{api_version}/users/{client_email}/mailFolders/{client_folder}/messages/{id}"
 
         # Request query
-        response = self.__session.delete(url=url_query, headers=headers, verify=True)
+        response = self._session.delete(url=url_query, headers=headers, verify=True)
 
         # Log response code
-        self.__logger.info(msg=f"HTTP Status Code {response.status_code}")
+        self._logger.info(msg=f"HTTP Status Code {response.status_code}")
 
         # Output
         content = None
         if response.status_code == 204:
-            self.__logger.info(msg="Request successful")
+            self._logger.info(msg="Request successful")
         
         return self.Response(status_code=response.status_code, content=content)
     
@@ -469,11 +462,6 @@ class Outlook(object):
         This method retrieves and saves attachments from the specified email message to a local file path.
         If the `index` parameter is set to True, each saved file will have an appended index in its name.
 
-        Example:
-            outlook.download_message_attachment(id="AQMkADAyMDI5NTdiLWRiMjktNDkyNC1hMzk0LWEzZjA5M2Q...",
-                                                path="/Workspace/Users/paulo.portela@adidas.com",
-                                                index=False)
-
         Args:
             id (str): The unique identifier of the email message from which attachments will be downloaded.
             path (str): The local directory path where the downloaded attachments will be saved.
@@ -482,16 +470,16 @@ class Outlook(object):
         Returns:
             Response: A Response dataclass instance containing the status code and any relevant content.
         """
-        self.__logger.info(msg="Downloads attachments from an email message")
-        self.__logger.info(msg=id)
-        self.__logger.info(msg=path)
+        self._logger.info(msg="Downloads attachments from an email message")
+        self._logger.info(msg=id)
+        self._logger.info(msg=path)
 
         # Configuration
-        token = self.__configuration.token
-        api_domain = self.__configuration.api_domain
-        api_version = self.__configuration.api_version
-        client_email = self.__configuration.client_email
-        client_folder = self.__configuration.client_folder
+        token = self._configuration.token
+        api_domain = self._configuration.api_domain
+        api_version = self._configuration.api_version
+        client_email = self._configuration.client_email
+        client_folder = self._configuration.client_folder
 
         # Request headers
         headers = {"Authorization": f"Bearer {token}",
@@ -501,10 +489,10 @@ class Outlook(object):
         url_query = fr"https://{api_domain}/{api_version}/users/{client_email}/mailFolders/{client_folder}/messages/{id}/attachments"
 
         # Request query
-        response = self.__session.get(url=url_query, headers=headers, verify=True)
+        response = self._session.get(url=url_query, headers=headers, verify=True)
 
         # Log response code
-        self.__logger.info(msg=f"HTTP Status Code {response.status_code}")
+        self._logger.info(msg=f"HTTP Status Code {response.status_code}")
 
         # Output
         content = None
@@ -524,10 +512,10 @@ class Outlook(object):
 
                     # Create file while removing invalid characters
                     filename = re.sub(pattern=r"[^a-zA-Z0-9.]+", repl="_", string=filename)
-                    self.__logger.info(msg=filename)
+                    self._logger.info(msg=filename)
                     open(file=os.path.join(path, filename), mode="wb").write(file_content)
                 else:
-                    self.__logger.error(msg="Invalid attachment found")
+                    self._logger.error(msg="Invalid attachment found")
         
         return self.Response(status_code=response.status_code, content=content)
 
