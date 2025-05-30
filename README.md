@@ -50,7 +50,7 @@ if response.status_code == 200:
 response = outlook.list_messages(filter="isRead ne true")
 if response.status_code == 200:
     df = pd.DataFrame([item.dict() for item in response.content])
-    display(df)
+    print(df)
 ```
 
 ```python
@@ -63,6 +63,7 @@ if response.status_code == 200:
 ```
 
 ```python
+# Deletes a message from the current folder
 message_id = "A...A=="
 response = outlook.delete_message(id=message_id)
 if response.status_code == 204:
