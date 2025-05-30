@@ -29,6 +29,7 @@ sp_domain = "companygroup.sharepoint.com"
 
 client_email = "team.email@company.com"
 
+# Initialize Outlook client
 outlook = outlooklib.Outlook(client_id=client_id, 
                              tenant_id=tenant_id, 
                              client_secret=client_secret,
