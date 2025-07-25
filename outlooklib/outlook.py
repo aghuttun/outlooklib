@@ -19,6 +19,8 @@ import re
 import requests
 from typing import Any, Type
 
+# Creates a logger for this module
+logger = logging.getLogger(__name__)
 
 class Outlook(object):
     @dataclasses.dataclass
@@ -38,7 +40,7 @@ class Outlook(object):
         status_code: int
         content: Any = None
 
-    def __init__(self, client_id: str, tenant_id: str, client_secret: str, sp_domain: str, client_email: str, client_folder: str = "Inbox") -> None:
+    def __init__(self, client_id: str, tenant_id: str, client_secret: str, sp_domain: str, client_email: str, client_folder: str = "Inbox", logger: logging.Logger | None = None) -> None:
         """
         Initializes the Outlook client with the provided credentials and configuration.
 
@@ -49,12 +51,11 @@ class Outlook(object):
             sp_domain (str): The SharePoint domain.
             client_email (str): Client email account.
             client_folder (str): Client folder. Defaults to "Inbox".
+            logger (logging.Logger, optional): Logger instance to use. If None, a default logger is created.
         """
         # Init logging
-        self._logger = logging.getLogger(name=__name__)
-        self._logger.setLevel(level=logging.INFO)
-        handler = logging.StreamHandler()
-        self._logger.addHandler(handler)
+        # Use provided logger or create a default one
+        self._logger = logger or logging.getLogger(name=__name__)
 
         # Init variables
         self._session: requests.Session = requests.Session()
