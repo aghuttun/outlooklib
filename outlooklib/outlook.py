@@ -22,6 +22,7 @@ from typing import Any, Type
 # Creates a logger for this module
 logger = logging.getLogger(__name__)
 
+
 class Outlook(object):
     @dataclasses.dataclass
     class Configuration(object):
