@@ -42,15 +42,27 @@ outlook = outlooklib.Outlook(client_id=client_id,
 # Retrieves a list of mail folders
 response = outlook.list_folders()
 if response.status_code == 200:
-    df = pd.DataFrame([item.dict() for item in response.content])
+    df = pd.DataFrame(response.content)
     print(df)
 ```
 
 ```python
-# Retrieves the top 100 messages from the specified folder, filtered by a given condition
+# Retrieves the top 100 unread messages from the specified folder
 response = outlook.list_messages(filter="isRead ne true")
 if response.status_code == 200:
-    df = pd.DataFrame([item.dict() for item in response.content])
+    df = pd.DataFrame(response.content)
+    print(df)
+```
+
+```python
+# Retrieves the top 100 messages from the specified folder, with more than 2 days
+import datetime
+
+n_days_ago = (datetime.datetime.utcnow() - datetime.timedelta(days=2)).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+response = outlook.list_messages(filter=f"receivedDateTime le {n_days_ago}")
+if response.status_code == 200:
+    df = pd.DataFrame(response.content)
     print(df)
 ```
 
@@ -72,7 +84,29 @@ if response.status_code == 204:
 ```
 
 ```python
+# Deletes messages from the current folder, one by one, with more than 3 days
+import datetime
+
+x_days_ago = (datetime.datetime.utcnow() - datetime.timedelta(days=3)).strftime("%Y-%m-%dT%H:%M:%SZ")
+response = outlook.list_messages(filter=f"receivedDateTime le {x_days_ago}")
+if response.status_code == 200:
+    df = pd.DataFrame(response.content['value'])
+    display(df)
+
+    for msg_id in df["id"]:
+        response = outlook.delete_message(id=msg_id)
+        if response.status_code == 204:
+            print(f"Message {msg_id} deleted successfully")
+```
+
+```python
+# Change current folder
 outlook.change_folder(id="root")
+```
+
+```python
+# Close
+del(outlook)
 ```
 
 ## Installation

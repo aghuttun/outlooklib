@@ -134,33 +134,37 @@ class Outlook(object):
             with open(file=save_as, mode="wb") as file:
                 file.write(content)
     
-    def _handle_response(self, response: requests.Response, model: Type[BaseModel], rtype: str = "scalar") -> BaseModel | list[BaseModel]:
+    def _handle_response(self, response: requests.Response, model: Type[BaseModel], rtype: str = "scalar") -> dict | list[dict]:
         """
-        Handles the response from an API request and deserializes the JSON content.
+        Handles and deserializes the JSON content from an API response.
 
         This method processes the response from an API request and deserializes the JSON content
-        into a Pydantic BaseModel instance or a list of instances, depending on the specified response type.
+        into a Pydantic BaseModel or a list of BaseModel instances, depending on the response type.
 
         Args:
             response (requests.Response): The response object from the API request.
-            model (BaseModel): The Pydantic BaseModel class to use for deserialization and validation.
-            rtype (str, optional): The type of response to handle. Options are "scalar" for a single record
+            model (Type[BaseModel]): The Pydantic BaseModel class to use for deserialization and validation.
+            rtype (str, optional): The type of response to handle. Use "scalar" for a single record
                                    and "list" for a list of records. Defaults to "scalar".
 
         Returns:
-            BaseModel | list[BaseModel]: The deserialized content as a Pydantic BaseModel instance or a list of instances.
+            dict or list[dict]: The deserialized content as a dictionary (for scalar) or a list of dictionaries (for list).
         """
         if rtype.lower() == "scalar": 
             # Deserialize json (scalar values)
             content_raw = response.json()
-            # Pydantic v1
-            return model(**content_raw)
+            # Pydantic v1 validation
+            validated = model(**content_raw)
+            # Convert to dict
+            return validated.dict()
         else:
             # Deserialize json
             content_raw = response.json()["value"]
-            # Pydantic v1
-            return parse_obj_as(list[model], content_raw)
+            # Pydantic v1 validation
+            validated_list = parse_obj_as(list[model], content_raw)
             # return [dict(data) for data in parse_obj_as(list[model], content_raw)]
+            # Convert to a list of dicts
+            return [item.dict() for item in validated_list]
 
     def change_client_email(self, email: str) -> None:
         """
