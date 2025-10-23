@@ -63,7 +63,7 @@ class Outlook(object):
         custom_logger: logging.Logger | None = None,
     ) -> None:
         """
-        Initializes the Outlook client with the provided credentials and configuration.
+        Initialize the Outlook client with the provided credentials and configuration.
 
         Args:
             client_id (str): The Azure client ID used for authentication.
@@ -104,7 +104,7 @@ class Outlook(object):
 
     def __del__(self) -> None:
         """
-        Cleans the house at the exit.
+        Clean the house at the exit.
         """
         self._logger.info(msg="Cleans the house at the exit")
         self._session.close()
@@ -162,7 +162,7 @@ class Outlook(object):
         self, response: requests.Response, model: Type[BaseModel], rtype: str = "scalar"
     ) -> dict | list[dict]:
         """
-        Handles and deserializes the JSON content from an API response.
+        Handle and deserializes the JSON content from an API response.
 
         This method processes the response from an API request and deserializes the JSON content into a Pydantic
         BaseModel or a list of BaseModel instances, depending on the response type.
@@ -227,7 +227,7 @@ class Outlook(object):
 
     def list_folders(self, save_as: str | None = None) -> Response:
         """
-        Retrieves a list of mail folders for the authenticated user.
+        Retrieve a list of mail folders for the authenticated user.
 
         This method fetches the mail folders for the authenticated user's email account. The results can be saved to a
         JSON file if the `save_as` parameter is provided.
@@ -285,7 +285,7 @@ class Outlook(object):
 
     def list_messages(self, filter: str, save_as: str | None = None) -> Response:
         """
-        Retrieves the top 100 messages from the specified folder, filtered by a given condition.
+        Retrieve the top 100 messages from the specified folder, filtered by a given condition.
 
         This method fetches up to 100 email messages from the current folder, applying an filter to narrow down the
         results. The results can be saved to a JSON file if the `save_as` parameter is provided.
@@ -358,7 +358,7 @@ class Outlook(object):
 
     def move_message(self, id: str, to: str, save_as: str | None = None) -> Response:
         """
-        Moves a message from the current folder to another specified folder.
+        Move a message from the current folder to another specified folder.
 
         This method relocates an email message identified by its unique ID from the current folder to a destination
         folder specified by its ID.
@@ -421,7 +421,7 @@ class Outlook(object):
 
     def delete_message(self, id: str) -> Response:
         """
-        Deletes a message from the current folder.
+        Delete a message from the current folder.
 
         This method removes a specified email message from the currently selected folder.
 
@@ -465,7 +465,7 @@ class Outlook(object):
 
     def download_message_attachment(self, id: str, path: str, index: bool = False) -> Response:
         """
-        Downloads attachments from an email message.
+        Download attachments from an email message.
 
         This method retrieves and saves attachments from the specified email message to a local file path.
         If the `index` parameter is set to True, each saved file will have an appended index in its name.
