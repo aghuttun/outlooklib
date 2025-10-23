@@ -58,7 +58,7 @@ if response.status_code == 200:
 # Retrieves the top 100 messages from the specified folder, with more than 2 days
 import datetime
 
-n_days_ago = (datetime.datetime.utcnow() - datetime.timedelta(days=2)).strftime("%Y-%m-%dT%H:%M:%SZ")
+n_days_ago = (datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=2)).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 response = outlook.list_messages(filter=f"receivedDateTime le {n_days_ago}")
 if response.status_code == 200:
@@ -67,6 +67,7 @@ if response.status_code == 200:
 ```
 
 ```python
+# Downloads message attachments
 message_id = "A...A=="
 response = outlook.download_message_attachment(id=message_id, 
                                                path=r"C:\Users\admin", 
@@ -87,10 +88,10 @@ if response.status_code == 204:
 # Deletes messages from the current folder, one by one, with more than 3 days
 import datetime
 
-x_days_ago = (datetime.datetime.utcnow() - datetime.timedelta(days=3)).strftime("%Y-%m-%dT%H:%M:%SZ")
+x_days_ago = (datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=3)).strftime("%Y-%m-%dT%H:%M:%SZ")
 response = outlook.list_messages(filter=f"receivedDateTime le {x_days_ago}")
 if response.status_code == 200:
-    df = pd.DataFrame(response.content['value'])
+    df = pd.DataFrame(response.content)
     display(df)
 
     for msg_id in df["id"]:
