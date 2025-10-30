@@ -1,8 +1,8 @@
 """
 Define Pydantic data structures for Outlook entities.
 
-This module provides Pydantic models for representing Outlook folders and messages,
-enabling structured data validation and serialization for use with Outlook-related APIs.
+This module provides Pydantic models for representing Outlook folders and messages, enabling structured data validation
+and serialization for use with Outlook-related APIs.
 
 Classes
 -------
@@ -47,8 +47,8 @@ class ListMessages(BaseModel):
     """
     Represent an Outlook message with sender, subject, status, and metadata fields.
 
-    Define the structure for an Outlook message, including sender information,
-    subject, read status, attachment presence, importance, flag status, and web link.
+    Define the structure for an Outlook message, including sender information, subject, read status,
+    attachment presence, importance, flag status, and web link.
 
     Attributes
     ----------
