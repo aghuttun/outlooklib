@@ -1,9 +1,9 @@
 # outlooklib
 
-* [Description](#package-description)
-* [Usage](#usage)
-* [Installation](#installation)
-* [License](#license)
+- [Description](#package-description)
+- [Usage](#usage)
+- [Installation](#installation)
+- [License](#license)
 
 ## Package Description
 
@@ -14,9 +14,7 @@ Microsoft Outlook client Python package that uses the [requests](https://pypi.or
 
 ## Usage
 
-* [outlooklib](#outlooklib)
-
-from a script:
+From a script:
 
 ```python
 import outlooklib
@@ -112,8 +110,6 @@ del(outlook)
 
 ## Installation
 
-* [outlooklib](#outlooklib)
-
 Install python and pip if you have not already.
 
 Then run:
@@ -142,6 +138,6 @@ To test the development package: [Testing](#testing)
 
 ## License
 
-* [outlooklib](#outlooklib)
-
 BSD License (see license file)
+
+[top](#outlooklib)
