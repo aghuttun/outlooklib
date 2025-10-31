@@ -110,4 +110,4 @@ class MoveMessage(BaseModel):
     change_key: str = Field(alias="changeKey")
 
 
-# eom
+# eof
