@@ -4,14 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "outlooklib"
-version = "0.0.10"
+version = "0.0.11"
 requires-python = ">=3.10"
 description = "Microsoft Outlook client Python package that uses the requests library."
 readme = "README.md"
 authors = [{ name = "Paulo Portela", email = "portela.paulo@gmail.com" }]
 maintainers = [{ name = "Paulo Portela", email = "portela.paulo@gmail.com" }]
 license = "BSD-3-Clause"
-license-files = ["LICEN[CS]E*"]
 keywords = ["Microsoft", "Outlook", "Python", "API", "Office365", "GraphAPI"]
 classifiers = [
     "Programming Language :: Python :: 3.10",
@@ -27,6 +26,7 @@ classifiers = [
     "Operating System :: MacOS :: MacOS X",
 ]
 dependencies = ["requests>=2.0", "pydantic==1.10.24"]
+
 [project.optional-dependencies]
 dev = ["twine", "build"]
 

@@ -55,8 +55,8 @@ class Outlook(object):
 
     Methods
     -------
-    auth()
-        Authenticate and obtain an access token using client credentials.
+    renew_token()
+        Renew the access token by re-authenticating.
     change_client_email(email)
         Change the current client email to be accessed.
     change_folder(id)
@@ -71,6 +71,8 @@ class Outlook(object):
         Delete a message from the current folder.
     download_message_attachment(id, path, index=False)
         Download attachments from an email message.
+    send_message()
+        Send an email with HTML body and optional attachments.
 
     Notes
     -----
@@ -148,7 +150,7 @@ class Outlook(object):
         sp_domain: str,
         client_email: str,
         client_folder: str = "Inbox",
-        custom_logger: logging.Logger | None = None,
+        custom_logger: logging.Logger | None = None
     ) -> None:
         """
         Initialize the Outlook client with the provided credentials and configuration.
@@ -201,7 +203,7 @@ class Outlook(object):
         self.change_folder(id=client_folder)
 
         # Authenticate
-        self.auth()
+        self._authenticate()
 
     def __del__(self) -> None:
         """
@@ -217,7 +219,7 @@ class Outlook(object):
         self._logger.info(msg="Cleaning up resources and closing the HTTP session upon exit.")
         self._session.close()
 
-    def auth(self) -> None:
+    def _authenticate(self) -> None:
         """
         Authenticate and obtain an access token using the client credentials flow.
 
@@ -239,7 +241,7 @@ class Outlook(object):
         # Request headers
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
-        # Authorization URL
+        # Authorization endpoint
         url_auth = f"https://login.microsoftonline.com/{self._configuration.tenant_id}/oauth2/v2.0/token"
 
         # Request body
@@ -250,7 +252,7 @@ class Outlook(object):
             "scope": "https://graph.microsoft.com/.default",
         }
 
-        # Request
+        # Send request
         response = self._session.post(url=url_auth, data=body, headers=headers, verify=True)
 
         # Log response code
@@ -259,6 +261,14 @@ class Outlook(object):
         # Return valid response
         if response.status_code == 200:
             self._configuration.token = json.loads(response.content.decode("utf-8"))["access_token"]
+
+    def renew_token(self) -> None:
+        """
+        This method forces a re-authentication to obtain a new access token.
+
+        The new token is stored in the token attribute.
+        """
+        self._authenticate()
 
     def _export_to_json(self, content: bytes, save_as: str | None) -> None:
         """
@@ -407,7 +417,7 @@ class Outlook(object):
         headers = {"Authorization": f"Bearer {token}",
                    "Content-Type": "application/json"}
 
-        # Request query
+        # Endpoint
         client_folder = "" if client_folder.lower() == "root" else f"{client_folder}/childFolders"
         url_query = fr"https://{api_domain}/{api_version}/users/{client_email}/mailFolders/{client_folder}"
 
@@ -479,7 +489,7 @@ class Outlook(object):
         headers = {"Authorization": f"Bearer {token}",
                    "Content-Type": "application/json"}
 
-        # Request query
+        # Endpoint
         url_query = fr"https://{api_domain}/{api_version}/users/{client_email}/mailFolders/{client_folder}/messages"
 
         # Query parameters
@@ -495,7 +505,7 @@ class Outlook(object):
         alias_list = [field.alias for field in ListMessages.__fields__.values() if field.field_info.alias is not None]
         params = {"$select": ",".join(alias_list), "$filter": filter, "$top": 100}
 
-        # Request
+        # Send request
         response = self._session.get(url=url_query, headers=headers, params=params, verify=True)
 
         # Log response code
@@ -557,7 +567,7 @@ class Outlook(object):
         headers = {"Authorization": f"Bearer {token}",
                    "Content-Type": "application/json"}
 
-        # Request query
+        # Endpoint
         url_query = rf"https://{api_domain}/{api_version}/users/{client_email}/mailFolders/{client_folder}/messages/{id}/move"
 
         # Pydantic v1
@@ -567,7 +577,7 @@ class Outlook(object):
         # Body
         body = {"DestinationId": to}
 
-        # Request query
+        # Send request
         response = self._session.post(url=url_query, headers=headers, params=params, json=body, verify=True)
 
         # Log response code
@@ -622,10 +632,10 @@ class Outlook(object):
         headers = {"Authorization": f"Bearer {token}",
                    "Content-Type": "application/json"}
 
-        # Request query
+        # Endpoint
         url_query = fr"https://{api_domain}/{api_version}/users/{client_email}/mailFolders/{client_folder}/messages/{id}"
 
-        # Request query
+        # Send request
         response = self._session.delete(url=url_query, headers=headers, verify=True)
 
         # Log response code
@@ -679,10 +689,10 @@ class Outlook(object):
         headers = {"Authorization": f"Bearer {token}",
                    "Content-Type": "application/json"}
 
-        # Request query
+        # Endpoint
         url_query = fr"https://{api_domain}/{api_version}/users/{client_email}/mailFolders/{client_folder}/messages/{id}/attachments"
 
-        # Request query
+        # Send request
         response = self._session.get(url=url_query, headers=headers, verify=True)
 
         # Log response code
@@ -712,5 +722,89 @@ class Outlook(object):
                     self._logger.error(msg="Invalid attachment found")
 
         return self.Response(status_code=response.status_code, content=content)
+
+    def send_message(self, recipients: list, subject: str, message: str, attachments: list | None = None) -> Response:
+        """
+        Send an email with HTML body and optional attachments.
+
+        Parameters
+        ----------
+        recipients : list
+            List of recipient email addresses.
+        subject : str
+            Subject line of the email.
+        message : str
+            HTML content of the email body.
+        attachments : list or None, optional
+            List of file paths to be attached to the email, by default None.
+
+        Returns
+        -------
+        Response
+            Custom Response object containing:
+                - status_code: HTTP status code of the request
+                - content: None
+
+        Notes
+        -----
+        The email is automatically saved to the sent items folder.
+        Attachments are encoded in base64 before sending.
+        """
+        self._logger.info(msg="Sending email.")
+
+        # Configuration
+        token = self._configuration.token
+        api_domain = self._configuration.api_domain
+        api_version = self._configuration.api_version
+        sender_email = self._configuration.client_email
+
+        # Endpoint
+        url = f"https://{api_domain}/{api_version}/users/{sender_email}/sendMail"
+
+        # Headers
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+        }
+
+        # Email message payload
+        payload = {
+            "message": {
+                "subject": subject,
+                "body": {"contentType": "HTML", "content": message},
+                "toRecipients": [{"emailAddress": {"address": r}} for r in recipients],
+            },
+            "saveToSentItems": "true",
+        }
+
+        # Handle attachments if provided
+        if attachments:
+            payload["message"]["attachments"] = []
+            for file_path in attachments:
+                # Read and encode the file content
+                with open(file=file_path, mode="rb") as f:
+                    content_bytes = base64.b64encode(f.read()).decode("utf-8")
+
+                # Append attachment to the message
+                payload["message"]["attachments"].append(
+                    {
+                        "@odata.type": "#microsoft.graph.fileAttachment",
+                        "name": os.path.basename(file_path),
+                        "contentBytes": content_bytes,
+                    }
+                )
+
+        # Send request
+        response = self._session.post(url=url, headers=headers, json=payload, verify=True)
+
+        # Log response code
+        self._logger.info(msg=f"HTTP Status Code {response.status_code}")
+
+        # Output
+        if response.status_code in (200, 202):
+            self._logger.info(msg="Request successful")
+
+        return self.Response(status_code=response.status_code, content=None)
+
 
 # eof

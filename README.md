@@ -37,7 +37,7 @@ outlook = outlooklib.Outlook(client_id=client_id,
 ```
 
 ```python
-# Retrieves a list of mail folders
+# Retrieve a list of mail folders
 response = outlook.list_folders()
 if response.status_code == 200:
     df = pd.DataFrame(response.content)
@@ -45,7 +45,7 @@ if response.status_code == 200:
 ```
 
 ```python
-# Retrieves the top 100 unread messages from the specified folder
+# Retrieve the top 100 unread messages from the specified folder
 response = outlook.list_messages(filter="isRead ne true")
 if response.status_code == 200:
     df = pd.DataFrame(response.content)
@@ -53,7 +53,7 @@ if response.status_code == 200:
 ```
 
 ```python
-# Retrieves the top 100 messages from the specified folder, with more than 2 days
+# Retrieve the top 100 messages from the specified folder, with more than 2 days
 import datetime
 
 n_days_ago = (datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=2)).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -65,7 +65,7 @@ if response.status_code == 200:
 ```
 
 ```python
-# Downloads message attachments
+# Download message attachments
 message_id = "A...A=="
 response = outlook.download_message_attachment(id=message_id, 
                                                path=r"C:\Users\admin", 
@@ -75,7 +75,7 @@ if response.status_code == 200:
 ```
 
 ```python
-# Deletes a message from the current folder
+# Delete a message from the current folder
 message_id = "A...A=="
 response = outlook.delete_message(id=message_id)
 if response.status_code == 204:
@@ -83,7 +83,7 @@ if response.status_code == 204:
 ```
 
 ```python
-# Deletes messages from the current folder, one by one, with more than 3 days
+# Delete messages from the current folder, one by one, with more than 3 days
 import datetime
 
 x_days_ago = (datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=3)).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -96,6 +96,16 @@ if response.status_code == 200:
         response = outlook.delete_message(id=msg_id)
         if response.status_code == 204:
             print(f"Message {msg_id} deleted successfully")
+```
+
+```python
+# Send an email with HTML body and optional attachments
+response = outlook.send_message(recipients=["peter.parker@example.com"],
+                                subject="Web tests",
+                                message="Something<br>to talk about...",
+                                attachments=None)
+if response.status_code == 200:
+    print("Email sent")
 ```
 
 ```python
