@@ -28,8 +28,8 @@ sp_domain = "companygroup.sharepoint.com"
 client_email = "team.email@company.com"
 
 # Initialize Outlook client
-outlook = outlooklib.Outlook(client_id=client_id, 
-                             tenant_id=tenant_id, 
+outlook = outlooklib.Outlook(client_id=client_id,
+                             tenant_id=tenant_id,
                              client_secret=client_secret,
                              sp_domain=sp_domain,
                              client_email=client_email,
@@ -67,9 +67,7 @@ if response.status_code == 200:
 ```python
 # Download message attachments
 message_id = "A...A=="
-response = outlook.download_message_attachment(id=message_id, 
-                                               path=r"C:\Users\admin", 
-                                               index=True)
+response = outlook.download_message_attachment(id=message_id, path=r"C:\Users\admin", index=True)
 if response.status_code == 200:
     print("Attachment(s) downloaded successfully")
 ```
