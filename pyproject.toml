@@ -25,7 +25,7 @@ classifiers = [
     "Operating System :: MacOS",
     "Operating System :: MacOS :: MacOS X",
 ]
-dependencies = ["requests>=2.0", "pydantic==1.10.24"]
+dependencies = ["requests>=2.0", "pydantic>=1.10.13,<2.0.0"]
 
 [project.optional-dependencies]
 dev = ["twine", "build"]
