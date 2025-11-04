@@ -93,8 +93,6 @@ class Outlook(object):
             The domain for the Microsoft Graph API (e.g., "graph.microsoft.com").
         api_version : str or None
             The version of the Microsoft Graph API to use (e.g., "v1.0").
-        sp_domain : str or None
-            The SharePoint domain associated with the client.
         client_id : str or None
             The Azure client ID for authentication.
         tenant_id : str or None
@@ -111,7 +109,6 @@ class Outlook(object):
 
         api_domain: str | None = None
         api_version: str | None = None
-        sp_domain: str | None = None
         client_id: str | None = None
         tenant_id: str | None = None
         client_secret: str | None = None
@@ -147,7 +144,6 @@ class Outlook(object):
         client_id: str,
         tenant_id: str,
         client_secret: str,
-        sp_domain: str,
         client_email: str,
         client_folder: str = "Inbox",
         custom_logger: logging.Logger | None = None
@@ -163,8 +159,6 @@ class Outlook(object):
             Specify the Azure tenant ID associated with the client.
         client_secret : str
             Specify the secret key for the Azure client.
-        sp_domain : str
-            Specify the SharePoint domain.
         client_email : str
             Specify the client email account.
         client_folder : str, optional
@@ -190,7 +184,6 @@ class Outlook(object):
         self._configuration = self.Configuration(
             api_domain=api_domain,
             api_version=api_version,
-            sp_domain=sp_domain,
             client_id=client_id,
             tenant_id=tenant_id,
             client_secret=client_secret,
