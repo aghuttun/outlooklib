@@ -773,10 +773,11 @@ class Outlook(object):
         # Handle attachments if provided
         if attachments:
             payload["message"]["attachments"] = []
+
             for file_path in attachments:
                 # Read and encode the file content
                 with open(file=file_path, mode="rb") as f:
-                    content_bytes = base64.b64encode(f.read()).decode("utf-8")
+                    content_bytes = base64.b64encode(s=f.read()).decode(encoding="utf-8")
 
                 # Append attachment to the message
                 payload["message"]["attachments"].append(
