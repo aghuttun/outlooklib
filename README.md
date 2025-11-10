@@ -27,11 +27,13 @@ tenant_id = "123"
 client_email = "team.email@company.com"
 
 # Initialize Outlook client
-outlook = outlooklib.Outlook(client_id=client_id,
-                             tenant_id=tenant_id,
-                             client_secret=client_secret,
-                             client_email=client_email,
-                             client_folder="Inbox")
+outlook = outlooklib.Outlook(
+    client_id=client_id,
+    tenant_id=tenant_id,
+    client_secret=client_secret,
+    client_email=client_email,
+    client_folder="Inbox"
+)
 ```
 
 ```python
@@ -65,7 +67,11 @@ if response.status_code == 200:
 ```python
 # Download message attachments
 message_id = "A...A=="
-response = outlook.download_message_attachment(id=message_id, path=r"C:\Users\admin", index=True)
+response = outlook.download_message_attachment(
+    id=message_id,
+    path=r"C:\Users\admin",
+    index=True
+)
 if response.status_code == 200:
     print("Attachment(s) downloaded successfully")
 ```
@@ -96,10 +102,12 @@ if response.status_code == 200:
 
 ```python
 # Send an email with HTML body and optional attachments
-response = outlook.send_message(recipients=["peter.parker@example.com"],
-                                subject="Web tests",
-                                message="Something<br>to talk about...",
-                                attachments=None)
+response = outlook.send_message(
+    recipients=["peter.parker@example.com"],
+    subject="Web tests",
+    message="Something<br>to talk about...",
+    attachments=None
+)
 if response.status_code == 200:
     print("Email sent")
 ```
