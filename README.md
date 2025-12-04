@@ -26,7 +26,7 @@ tenant_id = "123"
 
 client_email = "team.email@company.com"
 
-# Initialize Outlook client
+# 0. Initialize Outlook client
 outlook = outlooklib.Outlook(
     client_id=client_id,
     tenant_id=tenant_id,
@@ -37,59 +37,68 @@ outlook = outlooklib.Outlook(
 ```
 
 ```python
-# Retrieve a list of mail folders
+# 1. Retrieve a list of mail folders
 response = outlook.list_folders()
+
 if response.status_code == 200:
     df = pd.DataFrame(response.content)
-    print(df)
+    display(df)
 ```
 
 ```python
-# Retrieve the top 100 unread messages from the specified folder
+# 2.1. Retrieve the top 100 unread messages from the specified folder
 response = outlook.list_messages(filter="isRead ne true")
+
 if response.status_code == 200:
     df = pd.DataFrame(response.content)
-    print(df)
+    display(df)
 ```
 
 ```python
-# Retrieve the top 100 messages from the specified folder, with more than 2 days
+# 2.2. Retrieve the top 100 messages from the specified folder, with more than 2 days
 import datetime
 
 n_days_ago = (datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=2)).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 response = outlook.list_messages(filter=f"receivedDateTime le {n_days_ago}")
+
 if response.status_code == 200:
     df = pd.DataFrame(response.content)
     print(df)
 ```
 
 ```python
-# Download message attachments
+# 3. Download message attachments
 message_id = "A...A=="
+
 response = outlook.download_message_attachment(
     id=message_id,
     path=r"C:\Users\admin",
-    index=True
+    index=True,
 )
+
 if response.status_code == 200:
     print("Attachment(s) downloaded successfully")
 ```
 
 ```python
-# Delete a message from the current folder
+# 4.1. Delete a message from the current folder
 message_id = "A...A=="
+
 response = outlook.delete_message(id=message_id)
+
 if response.status_code == 204:
     print("Message deleted successfully")
 ```
 
 ```python
-# Delete messages from the current folder, one by one, with more than 3 days
+# 4.2. Delete messages from the current folder, one by one, with more than 3 days
 import datetime
 
 x_days_ago = (datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=3)).strftime("%Y-%m-%dT%H:%M:%SZ")
+
 response = outlook.list_messages(filter=f"receivedDateTime le {x_days_ago}")
+
 if response.status_code == 200:
     df = pd.DataFrame(response.content)
     display(df)
@@ -101,25 +110,26 @@ if response.status_code == 200:
 ```
 
 ```python
-# Send an email with HTML body and optional attachments
+# 5. Send an email with HTML body and optional attachments
 response = outlook.send_message(
     recipients=["peter.parker@example.com"],
     subject="Web tests",
     message="Something<br>to talk about...",
-    attachments=None
+    attachments=None,
 )
+
 if response.status_code == 200:
     print("Email sent")
 ```
 
 ```python
-# Change current folder
+# 6. Change current folder
 outlook.change_folder(id="root")
 ```
 
 ```python
 # Close
-del(outlook)
+del outlook
 ```
 
 ## Installation
