@@ -10,6 +10,11 @@ on:
 jobs:
   build-wheel:
     runs-on: windows-latest
+    env:
+      OUTLOOKLIB_CLIENT_ID: ${{ secrets.OUTLOOKLIB_CLIENT_ID }}
+      OUTLOOKLIB_TENANT_ID: ${{ secrets.OUTLOOKLIB_TENANT_ID }}
+      OUTLOOKLIB_CLIENT_SECRET: ${{ secrets.OUTLOOKLIB_CLIENT_SECRET }}
+      OUTLOOKLIB_CLIENT_EMAIL: ${{ secrets.OUTLOOKLIB_CLIENT_EMAIL }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,12 +37,7 @@ jobs:
         run: python -m pip install --upgrade pytest; python -m pytest tests/test_smoke.py -q
 
       - name: Run optional live Graph test
-        if: ${{ secrets.OUTLOOKLIB_CLIENT_ID != '' && secrets.OUTLOOKLIB_TENANT_ID != '' && secrets.OUTLOOKLIB_CLIENT_SECRET != '' && secrets.OUTLOOKLIB_CLIENT_EMAIL != '' }}
-        env:
-          OUTLOOKLIB_CLIENT_ID: ${{ secrets.OUTLOOKLIB_CLIENT_ID }}
-          OUTLOOKLIB_TENANT_ID: ${{ secrets.OUTLOOKLIB_TENANT_ID }}
-          OUTLOOKLIB_CLIENT_SECRET: ${{ secrets.OUTLOOKLIB_CLIENT_SECRET }}
-          OUTLOOKLIB_CLIENT_EMAIL: ${{ secrets.OUTLOOKLIB_CLIENT_EMAIL }}
+        if: ${{ env.OUTLOOKLIB_CLIENT_ID != '' && env.OUTLOOKLIB_TENANT_ID != '' && env.OUTLOOKLIB_CLIENT_SECRET != '' && env.OUTLOOKLIB_CLIENT_EMAIL != '' }}
         run: python -m pytest tests/test_live_graph.py -q
 
       - name: Run Rust tests
