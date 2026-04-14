@@ -1,23 +1,20 @@
 [build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["maturin>=1.7,<2.0"]
+build-backend = "maturin"
 
 [project]
 name = "outlooklib"
-version = "0.0.12"
+dynamic = ["version"]
 requires-python = ">=3.10"
-description = "Microsoft Outlook client Python package that uses the requests library."
+description = "Microsoft Outlook client package powered by Rust and PyO3."
 readme = "README.md"
 authors = [{ name = "Paulo Portela", email = "portela.paulo@gmail.com" }]
 maintainers = [{ name = "Paulo Portela", email = "portela.paulo@gmail.com" }]
 license = "BSD-3-Clause"
 keywords = ["Microsoft", "Outlook", "Python", "API", "Office365", "GraphAPI"]
 classifiers = [
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Rust",
     "Programming Language :: Python :: Implementation :: CPython",
     "Intended Audience :: Developers",
     "Operating System :: POSIX :: Linux",
@@ -25,10 +22,13 @@ classifiers = [
     "Operating System :: MacOS",
     "Operating System :: MacOS :: MacOS X",
 ]
-dependencies = ["requests>=2.0", "pydantic>=1.10.13,<2.0.0"]
+dependencies = []
 
 [project.optional-dependencies]
-dev = ["twine", "build"]
+dev = ["twine", "build", "pytest"]
+
+[tool.maturin]
+features = ["python"]
 
 [project.urls]
 Homepage = "https://github.com/aghuttun/outlooklib"

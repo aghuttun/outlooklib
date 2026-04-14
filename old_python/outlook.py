@@ -149,7 +149,7 @@ class Outlook(object):
         custom_logger: logging.Logger | None = None
     ) -> None:
         """
-        Initialize the Outlook client with the provided credentials and configuration.
+        Initialise the Outlook client with the provided credentials and configuration.
 
         Parameters
         ----------
@@ -168,7 +168,7 @@ class Outlook(object):
 
         Notes
         -----
-        Set up logging, initialize the HTTP session, store configuration, select the mail folder, and authenticate the
+        Set up logging, initialise the HTTP session, store configuration, select the mail folder, and authenticate the
         client.
         """
         # Init logging
