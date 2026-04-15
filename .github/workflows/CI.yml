@@ -47,7 +47,12 @@ jobs:
         run: python -m pip install --upgrade pip maturin pytest
 
       - name: Clean previous builds
-        run: rm -rf dist wheelhouse
+        run: |
+          rm -rf dist wheelhouse 2>/dev/null || true
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            Remove-Item -Path dist, wheelhouse -Recurse -Force -ErrorAction SilentlyContinue
+          fi
+        shell: bash
 
       - name: Build and install wheel for tests
         run: |
@@ -90,7 +95,12 @@ jobs:
         run: python -m pip install --upgrade pip maturin
 
       - name: Clean previous builds
-        run: rm -rf dist
+        run: |
+          rm -rf dist 2>/dev/null || true
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            Remove-Item -Path dist -Recurse -Force -ErrorAction SilentlyContinue
+          fi
+        shell: bash
 
       - name: Build wheel
         run: maturin build --release --features python --out dist
@@ -142,7 +152,7 @@ jobs:
       id-token: write
 
     steps:
-      - name: Download all wheels
+      - name: Download wheels
         uses: actions/download-artifact@v4
         with:
           pattern: wheels-*
