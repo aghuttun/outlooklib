@@ -160,6 +160,7 @@ impl PyOutlook {
 fn outlooklib(_py: Python<'_>, module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_class::<PyOutlook>()?;
     module.add_class::<PyResponse>()?;
+    module.add("__version__", env!("CARGO_PKG_VERSION"))?;
     Ok(())
 }
 

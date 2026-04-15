@@ -1,1 +1,9 @@
 /target
+__pycache__/
+*.py[cod]
+/.venv
+/dist
+/wheelhouse
+/dist-verify
+/dist_verify
+/wheelhouse-verify
