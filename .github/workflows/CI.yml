@@ -46,6 +46,9 @@ jobs:
       - name: Install tooling
         run: python -m pip install --upgrade pip maturin pytest
 
+      - name: Clean previous builds
+        run: rm -rf dist wheelhouse
+
       - name: Build and install wheel for tests
         run: |
           maturin build --release --features python --out dist
@@ -61,6 +64,7 @@ jobs:
       - name: Run Rust tests
         run: cargo test --quiet
 
+  # ===================================================================
   build-wheels:
     name: Build wheels (${{ matrix.os }})
     needs: test
@@ -84,6 +88,9 @@ jobs:
 
       - name: Install maturin
         run: python -m pip install --upgrade pip maturin
+
+      - name: Clean previous builds
+        run: rm -rf dist
 
       - name: Build wheel
         run: maturin build --release --features python --out dist
@@ -114,8 +121,10 @@ jobs:
       - name: Install maturin
         run: python -m pip install --upgrade pip maturin
 
-      - name: Build sdist
-        run: maturin sdist --out dist
+      - name: Clean and build sdist
+        run: |
+          rm -rf dist
+          maturin sdist --out dist
 
       - name: Upload sdist
         uses: actions/upload-artifact@v4
@@ -133,7 +142,7 @@ jobs:
       id-token: write
 
     steps:
-      - name: Download wheels
+      - name: Download all wheels
         uses: actions/download-artifact@v4
         with:
           pattern: wheels-*
