@@ -20,16 +20,15 @@ jobs:
   test:
     name: Test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-
     env:
       OUTLOOKLIB_CLIENT_ID: ${{ secrets.OUTLOOKLIB_CLIENT_ID }}
       OUTLOOKLIB_TENANT_ID: ${{ secrets.OUTLOOKLIB_TENANT_ID }}
       OUTLOOKLIB_CLIENT_SECRET: ${{ secrets.OUTLOOKLIB_CLIENT_SECRET }}
       OUTLOOKLIB_CLIENT_EMAIL: ${{ secrets.OUTLOOKLIB_CLIENT_EMAIL }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
       - name: Checkout
@@ -46,31 +45,28 @@ jobs:
       - name: Install tooling
         run: python -m pip install --upgrade pip maturin pytest
 
-      - name: Clean previous builds
+      - name: Clean old builds
         run: |
-          rm -rf dist wheelhouse 2>/dev/null || true
-          if [ "$RUNNER_OS" = "Windows" ]; then
-            Remove-Item -Path dist, wheelhouse -Recurse -Force -ErrorAction SilentlyContinue
-          fi
+          rm -rf wheelhouse-test dist target 2>/dev/null || true
         shell: bash
 
-      - name: Build and install wheel for tests
-        run: |
-          maturin build --release --features python --out dist
-          python -m pip install --force-reinstall dist/*.whl
+      - name: Build wheel for tests
+        run: maturin build --release --features python --out wheelhouse-test
+
+      - name: Install built wheel
+        run: python -c 'import glob, subprocess, sys; wheels = glob.glob("wheelhouse-test/*.whl"); assert wheels, "No wheel found"; subprocess.check_call([sys.executable, "-m", "pip", "install", "--force-reinstall", *wheels])'
 
       - name: Run Python smoke test
-        run: python -m pytest tests/test_smoke.py -q --tb=no
+        run: python -m pytest tests/test_smoke.py -q
 
       - name: Run optional live Graph test
-        if: matrix.os == 'ubuntu-latest' && env.OUTLOOKLIB_CLIENT_ID != ''
-        run: python -m pytest tests/test_live_graph.py -q --tb=no
+        if: matrix.os == 'ubuntu-latest' && env.OUTLOOKLIB_CLIENT_ID != '' && env.OUTLOOKLIB_TENANT_ID != '' && env.OUTLOOKLIB_CLIENT_SECRET != '' && env.OUTLOOKLIB_CLIENT_EMAIL != ''
+        run: python -m pytest tests/test_live_graph.py -q
 
       - name: Run Rust tests
-        run: cargo test --quiet
+        run: cargo test -q
 
-  # ===================================================================
-  build-wheels:
+  build-wheel:
     name: Build wheels (${{ matrix.os }})
     needs: test
     runs-on: ${{ matrix.os }}
@@ -94,22 +90,19 @@ jobs:
       - name: Install maturin
         run: python -m pip install --upgrade pip maturin
 
-      - name: Clean previous builds
+      - name: Clean old builds
         run: |
-          rm -rf dist 2>/dev/null || true
-          if [ "$RUNNER_OS" = "Windows" ]; then
-            Remove-Item -Path dist -Recurse -Force -ErrorAction SilentlyContinue
-          fi
+          rm -rf wheelhouse 2>/dev/null || true
         shell: bash
 
       - name: Build wheel
-        run: maturin build --release --features python --out dist
+        run: maturin build --release --features python --out wheelhouse
 
       - name: Upload wheel artifact
         uses: actions/upload-artifact@v4
         with:
-          name: wheels-${{ matrix.os }}
-          path: dist/*.whl
+          name: wheel-${{ matrix.os }}
+          path: wheelhouse/*.whl
 
   build-sdist:
     name: Build sdist
@@ -131,35 +124,35 @@ jobs:
       - name: Install maturin
         run: python -m pip install --upgrade pip maturin
 
-      - name: Clean and build sdist
+      - name: Build sdist
         run: |
-          rm -rf dist
-          maturin sdist --out dist
+          rm -rf sdisthouse 2>/dev/null || true
+          maturin sdist --out sdisthouse
 
       - name: Upload sdist
         uses: actions/upload-artifact@v4
         with:
           name: sdist
-          path: dist/*.tar.gz
+          path: sdisthouse/*.tar.gz
 
   publish-pypi:
     name: Publish to PyPI
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [build-wheels, build-sdist]
+    needs: [build-wheel, build-sdist]
     permissions:
       contents: read
       id-token: write
 
     steps:
-      - name: Download wheels
+      - name: Download wheel artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: wheels-*
+          pattern: wheel-*
           merge-multiple: true
           path: dist
 
-      - name: Download sdist
+      - name: Download sdist artifact
         uses: actions/download-artifact@v4
         with:
           name: sdist
